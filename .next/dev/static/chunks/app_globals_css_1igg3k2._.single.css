@@ -39,10 +39,15 @@
     --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
     --text-3xl: 1.875rem;
     --text-3xl--line-height: calc(2.25 / 1.875);
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
+    --font-weight-bold: 700;
     --tracking-tight: -.025em;
     --default-transition-duration: .15s;
     --default-transition-timing-function: cubic-bezier(.4, 0, .2, 1);
@@ -361,6 +366,10 @@
     justify-content: center;
   }
 
+  .justify-evenly {
+    justify-content: space-evenly;
+  }
+
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
@@ -371,6 +380,10 @@
 
   .gap-6 {
     gap: calc(var(--spacing) * 6);
+  }
+
+  .self-center {
+    align-self: center;
   }
 
   .rounded-full {
@@ -409,6 +422,10 @@
     background-color: var(--color-zinc-50);
   }
 
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
+  }
+
   .px-5 {
     padding-inline: calc(var(--spacing) * 5);
   }
@@ -421,12 +438,21 @@
     padding-block: calc(var(--spacing) * 32);
   }
 
+  .pt-4 {
+    padding-top: calc(var(--spacing) * 4);
+  }
+
   .text-center {
     text-align: center;
   }
 
   .font-sans {
     font-family: var(--font-geist-sans);
+  }
+
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
   }
 
   .text-3xl {
@@ -444,6 +470,11 @@
     line-height: var(--tw-leading, var(--text-lg--line-height));
   }
 
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+
   .leading-8 {
     --tw-leading: calc(var(--spacing) * 8);
     line-height: calc(var(--spacing) * 8);
@@ -452,6 +483,11 @@
   .leading-10 {
     --tw-leading: calc(var(--spacing) * 10);
     line-height: calc(var(--spacing) * 10);
+  }
+
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
   }
 
   .font-medium {
@@ -483,6 +519,10 @@
 
   .text-zinc-950 {
     color: var(--color-zinc-950);
+  }
+
+  .decoration-solid {
+    text-decoration-style: solid;
   }
 
   .antialiased {
@@ -592,6 +632,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.box {
+  background: gray;
+  border: 1px solid #000;
+  width: 300px;
+  height: 100px;
+  margin-top: 10px;
+  padding: 50px;
 }
 
 @property --tw-border-style {
