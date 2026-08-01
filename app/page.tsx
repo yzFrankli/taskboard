@@ -3,7 +3,7 @@
 // import Image from "next/image";
 // import { create } from "domain";
 
-import { createClient } from "../src/config/supabaseClient"
+import { createClient } from "../config/supabaseClient"
 import { useEffect, useState } from "react";
 
 export default function Home() { 
