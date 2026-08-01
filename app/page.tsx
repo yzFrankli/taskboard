@@ -5,15 +5,24 @@ import { UUID } from "crypto";
 // import { create } from "domain";
 
 import { createClient } from "../config/supabaseClient"
-import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useActionState, useEffect, useState } from "react";
+
+// components
+import TaskCard from "./components/TaskCard";
+import { SupabaseClient } from "@supabase/supabase-js";
+
 
 export default function Home() { 
 
   // console.log(supabase)
   const supabase = createClient()
+  const stat: string[] = ["to-do", "in-progress", "done"]
+
 
   const [fetchError, setFetchError] = useState<any>(null)
   const [taskTitles, setTaskTitles] = useState<any>(null)
+
+  const [createError, setCreateError] = useState<any>(null)
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -21,7 +30,7 @@ export default function Home() {
 
       const { data, error } = await supabase
         .from('tasks')
-        .select('title')
+        .select()
 
         if (error) {
           setFetchError('Could not fetch the tasks')
@@ -34,33 +43,115 @@ export default function Home() {
         }
     }
 
-    fetchTasks()
+    const createData = async (prev: any, formData: any) => {
 
+      const formFields = {
+        title: formData.get('title'),
+        description: formData.get('description'),
+        stat: formData.get('status'),
+
+      }
+
+      const payload = {
+        ... formFields
+      }
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert(payload)
+        .select()
+        .single()
+
+      console.log(data, error)
+
+      if (error) {
+          setCreateError('Could not create the tasks')
+          setTaskTitles([])
+          console.log(error)
+          return {
+            formFields
+          }
+        }
+        if (data) {
+          setTaskTitles(data)
+          setFetchError(null)
+        }
+    }
+    const initialState = {
+      formFields: {
+        title: '',
+        description: '',
+        stat: '',
+      }
+    }
+    createData(null, supabase)
+    // const [state, formAction, isPending] = useActionState(createData, initialState,)
+
+    fetchTasks()
   }, [])
 
   return (
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
-      <h1>hello</h1>
       {fetchError && (<p>{fetchError}</p>)}
-      {taskTitles && (
-        <div>
-          {taskTitles.map((tasks: { key: UUID; title: string }) => (
-            <h1 key={tasks.id}>{tasks.title}</h1>
-          ))}
-        </div>
-      )}
+      {/* Title */}
+      <div className="self-center">
+          <h1 className="font-bold p-5 text-xl"> Frank's Task Board</h1>
+      </div>
+      
+      {/* Sections (Todo, In progress, Done) */}
+      <div className="flex justify-evenly">
+          {/* Todo */}
+          <div className="">
+              <h1 className="">Todo</h1>
 
+              {/* Box */}
+              {taskTitles && (
+                <div className="task-grid">
+                  {taskTitles
+                  .filter((task: any) => task.status === stat[0])
+                  .map((tasks: any) => (
+                      <TaskCard key={tasks.id} tasks={tasks} />
+                  ))}
+                </div>
+              )}
+          </div>
 
+          {/* In progress */}
+          <div>
+              <h1>In Progress</h1>
+
+              {/* Box */}
+              {taskTitles && (
+                <div className="task-grid">
+                  {taskTitles
+                  .filter((task: any) => task.status === stat[1])
+                  .map((tasks: any) => (
+                      <TaskCard key={tasks.id} tasks={tasks} />
+                  ))}
+                </div>
+              )}
+            
+          </div>
+
+          {/* Done */}
+          <div>
+              <h1>Done</h1>
+
+              {/* Box */}
+              {taskTitles && (
+                <div className="task-grid">
+                  {taskTitles
+                  .filter((task: any) => task.status === stat[2])
+                  .map((tasks: any) => (
+                      <TaskCard key={tasks.id} tasks={tasks} />
+                  ))}
+                </div>
+              )}
+            
+          </div>
+      </div>
     </div>
 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
-    // 
+    
     // 
     // <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
     //   <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">

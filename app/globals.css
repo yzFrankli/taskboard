@@ -25,10 +25,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.box {
+.task-grid {
+  /* margin-top: 40px; */
+  display: grid;
+  /* grid-template-rows: auto; */
+  gap: 40px;
+}
+
+.TaskCard {
   width: 300px;
   height: 100px;
-  padding: 50px;
+  /* padding: 50px; */
   margin-top: 10px;
   border: 1px solid black;
   background: grey;
