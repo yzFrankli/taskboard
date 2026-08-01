@@ -6,7 +6,7 @@
 import { createClient } from "../src/config/supabaseClient"
 import { useEffect, useState } from "react";
 
-export default function Home() {
+export default function Home() { 
 
   // console.log(supabase)
   const supabase = createClient()
