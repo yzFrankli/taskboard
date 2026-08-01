@@ -1,10 +1,43 @@
-import Image from "next/image";
+"use client";
 
+// import Image from "next/image";
+// import { create } from "domain";
+
+import { createClient } from "../src/config/supabaseClient"
+import { useEffect, useState } from "react";
 
 export default function Home() {
+
+  // console.log(supabase)
+  const supabase = createClient()
+
+  const [fetchError, setFetchError] = useState<any>(null)
+  const [taskTitles, setTaskTitles] = useState<any>(null)
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+  
+
+      const { data, error } = await supabase
+        .from('tasks')
+        .select("*")
+
+        if (error) {
+          setFetchError('Could not fetch the tasks')
+          setTaskTitles(null)
+          console.log(error)
+        }
+        if (data) {
+          setTaskTitles(String(data))
+          setFetchError(null)
+        }
+    }
+
+    fetchTasks()
+
+  }, [])
+
   return (
-
-
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
       {/* Title */}
       <div className="self-center">
