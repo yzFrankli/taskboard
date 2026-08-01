@@ -1,10 +1,11 @@
 "use client";
 
+import { UUID } from "crypto";
 // import Image from "next/image";
 // import { create } from "domain";
 
 import { createClient } from "../config/supabaseClient"
-import { useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useEffect, useState } from "react";
 
 export default function Home() { 
 
@@ -20,15 +21,15 @@ export default function Home() {
 
       const { data, error } = await supabase
         .from('tasks')
-        .select("*")
+        .select('title')
 
         if (error) {
           setFetchError('Could not fetch the tasks')
-          setTaskTitles(null)
+          setTaskTitles([])
           console.log(error)
         }
         if (data) {
-          setTaskTitles(String(data))
+          setTaskTitles(data)
           setFetchError(null)
         }
     }
@@ -39,55 +40,28 @@ export default function Home() {
 
   return (
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
-      {/* Title */}
-      <div className="self-center">
-          <h1 className="font-bold p-5 text-xl"> Frank's Task Board</h1>
-      </div>
-      
-      {/* Sections (Todo, In progress, Done) */}
-      <div className="flex justify-evenly">
-          {/* Todo */}
-          <div className="">
-              <h1 className="">Todo</h1>
+      <h1>hello</h1>
+      {fetchError && (<p>{fetchError}</p>)}
+      {taskTitles && (
+        <div>
+          {taskTitles.map((tasks: { key: UUID; title: string }) => (
+            <h1 key={tasks.id}>{tasks.title}</h1>
+          ))}
+        </div>
+      )}
 
-              {/* Box */}
-              <div className="box">
-
-              </div>
-              <div className="box">
-              
-              </div>
-          </div>
-
-          {/* In progress */}
-          <div>
-              <h1>In Progress</h1>
-
-              {/* Box */}
-              <div className="box">
-
-              </div>
-              <div className="box">
-              
-              </div>
-          </div>
-
-          {/* Done */}
-          <div>
-              <h1>Done</h1>
-
-              {/* Box */}
-              <div className="box">
-
-              </div>
-              <div className="box">
-              
-              </div>
-          </div>
-      </div>
 
     </div>
 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
+    // 
     // <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
     //   <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
     //     <Image
