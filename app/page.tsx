@@ -3,7 +3,6 @@
 import { UUID } from "crypto";
 // import Image from "next/image";
 // import { create } from "domain";
-
 import { createClient } from "../config/supabaseClient"
 import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useActionState, useEffect, useState } from "react";
 
@@ -16,6 +15,7 @@ export default function Home() {
 
   // console.log(supabase)
   const supabase = createClient()
+  const supabase2 = createClient()
   const stat: string[] = ["to-do", "in-progress", "done"]
 
 
@@ -24,9 +24,31 @@ export default function Home() {
 
   const [createError, setCreateError] = useState<any>(null)
 
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const createTasks = async (formData: FormData) => {
+    formData.append("status", "to-do")
+    
+    const payload = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      status: formData.get('status'),
+    }
+
+      const { data: newTask, error } = await supabase 
+        .from('tasks')
+        .insert(payload)
+        .select()
+
+      if (error) {
+        console.log(error)
+        return
+      }
+  }
+  
+
   useEffect(() => {
     const fetchTasks = async () => {
-  
 
       const { data, error } = await supabase
         .from('tasks')
@@ -43,52 +65,8 @@ export default function Home() {
         }
     }
 
-    const createData = async (prev: any, formData: any) => {
-
-      // const formFields = {
-      //   title: formData.get('title'),
-      //   description: formData.get('description'),
-      //   stat: formData.get('status'),
-
-      // }
-
-      // const payload = {
-      //   ... formFields
-      // }
-      // const { data, error } = await supabase
-      //   .from('tasks')
-      //   .insert(payload)
-      //   .select()
-      //   .single()
-
-      // console.log(data, error)
-
-      // if (error) {
-      //     setCreateError('Could not create the tasks')
-      //     setTaskTitles([])
-      //     console.log(error)
-      //     return {
-      //       formFields
-      //     }
-      //   }
-      //   if (data) {
-      //     setTaskTitles(data)
-      //     setFetchError(null)
-      //   }
-    }
-    const initialState = {
-      formFields: {
-        title: '',
-        description: '',
-        stat: '',
-      }
-    }
-    createData(null, supabase)
-    // const [state, formAction, isPending] = useActionState(createData, initialState,)
-
     fetchTasks()
   }, [])
-
   return (
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
       {fetchError && (<p>{fetchError}</p>)}
@@ -113,6 +91,32 @@ export default function Home() {
                   ))}
                 </div>
               )}
+
+              {isOpen && (
+                <div className="TaskCard">
+                  <form
+                    action={createTasks}>
+                    <input
+                      type="text"
+                      name="title"
+                      style={{ width: '300px', height: '70px' }}
+                      placeholder="Task name"></input>
+                      <button type="submit"
+                        style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
+                      submit</button>
+                  </form>
+                </div>
+              )}
+
+              <div className="button">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                >Button Here</button>
+              </div>
+
+              
+
           </div>
 
           {/* In progress */}
