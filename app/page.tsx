@@ -45,36 +45,36 @@ export default function Home() {
 
     const createData = async (prev: any, formData: any) => {
 
-      const formFields = {
-        title: formData.get('title'),
-        description: formData.get('description'),
-        stat: formData.get('status'),
+      // const formFields = {
+      //   title: formData.get('title'),
+      //   description: formData.get('description'),
+      //   stat: formData.get('status'),
 
-      }
+      // }
 
-      const payload = {
-        ... formFields
-      }
-      const { data, error } = await supabase
-        .from('tasks')
-        .insert(payload)
-        .select()
-        .single()
+      // const payload = {
+      //   ... formFields
+      // }
+      // const { data, error } = await supabase
+      //   .from('tasks')
+      //   .insert(payload)
+      //   .select()
+      //   .single()
 
-      console.log(data, error)
+      // console.log(data, error)
 
-      if (error) {
-          setCreateError('Could not create the tasks')
-          setTaskTitles([])
-          console.log(error)
-          return {
-            formFields
-          }
-        }
-        if (data) {
-          setTaskTitles(data)
-          setFetchError(null)
-        }
+      // if (error) {
+      //     setCreateError('Could not create the tasks')
+      //     setTaskTitles([])
+      //     console.log(error)
+      //     return {
+      //       formFields
+      //     }
+      //   }
+      //   if (data) {
+      //     setTaskTitles(data)
+      //     setFetchError(null)
+      //   }
     }
     const initialState = {
       formFields: {
