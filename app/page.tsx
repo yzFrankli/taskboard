@@ -131,59 +131,62 @@ export default function Home() {
     fetchTasks()
   }, [sessionData])
   return (
-    <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
+    <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4 p-8">
       {fetchError && (<p>{fetchError}</p>)}
       {/* Title */}
-      <div className="self-center">
-          <h1 className="font-bold p-5 text-xl"> Frank's Task Board</h1>
+      <div className="border-b">
+          <h1 className="p-2 text-xl mg">My Tasks</h1>
       </div>
       
       {/* Sections (Todo, In progress, Done) */}
-      <div className="flex justify-evenly">
+      <div className="flex justify-around pt-5">
           {/* Todo */}
-          <div className="">
-              <h1 className="">Todo</h1>
-
-              {/* Box */}
-              {taskTitles && (
-                <div className="task-grid">
-                  {taskTitles
-                  .filter((task: any) => task.status === stat[0])
-                  .map((tasks: any) => (
-                      <TaskCard key={tasks.id} tasks={tasks} />
-                  ))}
-                </div>
-              )}
-
-              {isOpen && (
-                <div className="TaskCard">
-                  <form
-                    action={createTasks}>
-                    <input
-                      type="text"
-                      name="title"
-                      style={{ width: '300px', height: '70px' }}
-                      placeholder="Task name"></input>
-                      <button type="submit"
-                        style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
-                      submit</button>
-                      <input type="hidden" name="status" value="to-do"/>
-                      <input type="hidden" name="user_id" value={sessionData ? (sessionData.userId) : (0x0)}/>
-                  </form>
-                </div>
-              )}
-
-              <div className="button">
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(!isOpen)}
-                >Button Here</button>
+          <div>
+            <div className="status">
+              <h2>Todo</h2>
+            </div>
+            {/* Box */}
+            {taskTitles && (
+              <div className="task-grid">
+                {taskTitles
+                .filter((task: any) => task.status === stat[0])
+                .map((tasks: any) => (
+                    <TaskCard key={tasks.id} tasks={tasks} />
+                ))}
               </div>
+            )}
+
+            {isOpen && (
+              <div className="TaskCard">
+                <form
+                  action={createTasks}>
+                  <input
+                    type="text"
+                    name="title"
+                    style={{ width: '300px', height: '70px' }}
+                    placeholder="Task name"></input>
+                    <button type="submit"
+                      style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
+                    submit</button>
+                    <input type="hidden" name="status" value="to-do"/>
+                    <input type="hidden" name="user_id" value={sessionData ? (sessionData.userId) : (0x0)}/>
+                </form>
+              </div>
+            )}
+
+            <div className="button">
+              <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+              >Add Task</button>
+            </div>
           </div>
 
           {/* In progress */}
           <div>
-              <h1>In Progress</h1>
+              <div className="status">
+                <h2>In Progress</h2>
+              </div>
 
               {/* Box */}
               {taskTitles && (
@@ -218,14 +221,15 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
-                >Button Here</button>
+                >Add Task</button>
               </div>
           </div>
 
           {/* Done */}
           <div>
-              <h1>Done</h1>
-
+            <div className="status">
+              <h2>Done</h2>
+            </div>
               {/* Box */}
               {taskTitles && (
                 <div className="task-grid">
@@ -259,7 +263,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setIsOpen(!isOpen)}
-                >Button Here</button>
+                >Add Task</button>
               </div>
               
           </div>
