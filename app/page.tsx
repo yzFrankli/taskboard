@@ -15,8 +15,8 @@ export default function Home() {
 
   // console.log(supabase)
   const supabase = createClient()
-  const supabase2 = createClient()
   const stat: string[] = ["to-do", "in-progress", "done"]
+
 
 
   const [fetchError, setFetchError] = useState<any>(null)
@@ -26,47 +26,110 @@ export default function Home() {
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const [sessionData, setSessionData] = useState<any>(null);
+
+  useEffect(() => {
+    const getSession = async () => {
+      let { 
+        data: { session }, 
+        error
+      } = await supabase.auth.getSession()
+
+      console.log("session", session)
+      console.log("error", error);
+      if (!session) {
+        const { error } = await supabase.auth.signInAnonymously()
+      }
+
+      if (session) {
+        console.log("user", session.user)
+
+        const jwtPayload = JSON.parse(
+          atob(session.access_token.split('.')[1])
+        );
+        
+        console.log(jwtPayload)
+
+        setSessionData({
+          sessionId: jwtPayload.session_id,
+          userId: session.user.id,
+        });
+      } else {
+        setSessionData(null)
+      }
+    }
+    
+    getSession()
+  }, [])
+
+  const fetchTasks = async () => {
+    if (!sessionData) return
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .select()
+      .eq('user_id', sessionData.userId)
+
+      if (error) {
+        setFetchError('Could not fetch the tasks')
+        setTaskTitles([])
+        console.log(error)
+      }
+      if (data) {
+        setTaskTitles(data)
+        setFetchError(null)
+      }
+  }
+
+  useEffect(() => {
+    const { 
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        const jwtPayload = JSON.parse(atob(session.access_token.split('.')[1]));
+
+        setSessionData({
+          sessionId: jwtPayload.session_id,
+          userId: session.user.id,
+        });
+      } else {
+        setSessionData(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [])
+  
+
+
   const createTasks = async (formData: FormData) => {
-    formData.append("status", "to-do")
     
     const payload = {
       title: formData.get('title'),
       description: formData.get('description'),
       status: formData.get('status'),
+      user_id: formData.get("user_id"),
     }
 
       const { data: newTask, error } = await supabase 
         .from('tasks')
         .insert(payload)
         .select()
+        .eq('user_id', sessionData.userId)
 
       if (error) {
         console.log(error)
         return
       }
+      if( formData ) {
+        fetchTasks()
+      }
   }
   
-
+  
   useEffect(() => {
-    const fetchTasks = async () => {
-
-      const { data, error } = await supabase
-        .from('tasks')
-        .select()
-
-        if (error) {
-          setFetchError('Could not fetch the tasks')
-          setTaskTitles([])
-          console.log(error)
-        }
-        if (data) {
-          setTaskTitles(data)
-          setFetchError(null)
-        }
-    }
-
     fetchTasks()
-  }, [])
+  }, [sessionData])
   return (
     <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4">
       {fetchError && (<p>{fetchError}</p>)}
@@ -104,6 +167,8 @@ export default function Home() {
                       <button type="submit"
                         style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
                       submit</button>
+                      <input type="hidden" name="status" value="to-do"/>
+                      <input type="hidden" name="user_id" value={sessionData ? (sessionData.userId) : (0x0)}/>
                   </form>
                 </div>
               )}
@@ -114,9 +179,6 @@ export default function Home() {
                   onClick={() => setIsOpen(!isOpen)}
                 >Button Here</button>
               </div>
-
-              
-
           </div>
 
           {/* In progress */}
@@ -133,7 +195,31 @@ export default function Home() {
                   ))}
                 </div>
               )}
-            
+
+              {isOpen && (
+                <div className="TaskCard">
+                  <form
+                    action={createTasks}>
+                    <input
+                      type="text"
+                      name="title"
+                      style={{ width: '300px', height: '70px' }}
+                      placeholder="Task name"></input>
+                      <button type="submit"
+                        style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
+                      submit</button>
+                      <input type="hidden" name="status" value="in-progress"/>
+                      <input type="hidden" name="user_id" value={sessionData ? (sessionData.userId) : (0x0)}/>
+                  </form>
+                </div>
+              )}
+
+              <div className="button">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                >Button Here</button>
+              </div>
           </div>
 
           {/* Done */}
@@ -150,71 +236,35 @@ export default function Home() {
                   ))}
                 </div>
               )}
-            
+
+              {isOpen && (
+                <div className="TaskCard">
+                  <form
+                    action={createTasks}>
+                    <input
+                      type="text"
+                      name="title"
+                      style={{ width: '300px', height: '70px' }}
+                      placeholder="Task name"></input>
+                      <button type="submit"
+                        style={{ border: "1px solid", borderColor: "black", backgroundColor: "red" }} >
+                      submit</button>
+                      <input type="hidden" name="status" value="done"/>
+                      <input type="hidden" name="user_id" value={sessionData ? (sessionData.userId) : (0x0)}/>
+                  </form>
+                </div>
+              )}
+
+              <div className="button">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                >Button Here</button>
+              </div>
+              
           </div>
       </div>
     </div>
 
-    
-    // 
-    // <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-    //   <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-    //     <Image
-    //       className="dark:invert"
-    //       src="/next.svg"
-    //       alt="Next.js logo"
-    //       width={100}
-    //       height={20}
-    //       priority
-    //     />
-    //     <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-    //       <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-    //         To get started, edit the page.tsx file.
-    //       </h1>
-    //       <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-    //         Looking for a starting point or more instructions? Head over to{" "}
-    //         <a
-    //           href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-    //           className="font-medium text-zinc-950 dark:text-zinc-50"
-    //         >
-    //           Templates
-    //         </a>{" "}
-    //         or the{" "}
-    //         <a
-    //           href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-    //           className="font-medium text-zinc-950 dark:text-zinc-50"
-    //         >
-    //           Learning
-    //         </a>{" "}
-    //         center.
-    //       </p>
-    //     </div>
-    //     <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-    //       <a
-    //         className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-    //         href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-    //         target="_blank"
-    //         rel="noopener noreferrer"
-    //       >
-    //         <Image
-    //           className="dark:invert"
-    //           src="/vercel.svg"
-    //           alt="Vercel logomark"
-    //           width={16}
-    //           height={16}
-    //         />
-    //         Deploy Now
-    //       </a>
-    //       <a
-    //         className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-    //         href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-    //         target="_blank"
-    //         rel="noopener noreferrer"
-    //       >
-    //         Documentation
-    //       </a>
-    //     </div>
-    //   </main>
-    // </div>
   );
 }
