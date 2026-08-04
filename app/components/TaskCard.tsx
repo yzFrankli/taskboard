@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 const TaskCard = ({ tasks }: { tasks: any }) => {
+
   return (
     <div className="TaskCard">
       <h3>{tasks.title}</h3>
