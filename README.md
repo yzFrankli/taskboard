@@ -1,4 +1,4 @@
-# taskboard
+# Taskboard
 A fully-featured Kanban-style task board where users can create tasks, drag them across board sections, and manage work visually — inspired by tools like Asana and Linear. (NextPlay Assessment)
 
 #This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
