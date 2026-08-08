@@ -10,6 +10,8 @@ import TaskCard from "./components/TaskCard";
 import AddButton from "./components/AddButton"
 import { SupabaseClient } from "@supabase/supabase-js";
 import Form from "./components/Form";
+import { DragDropProvider, DragEndEvent, useDraggable } from "@dnd-kit/react";
+import Column from "./components/Column";
 
 
 export default function Home() { 
@@ -18,9 +20,10 @@ export default function Home() {
   const supabase = createClient()
   const stat: string[] = ["to-do", "in-progress", "done"]
 
-
+  const [tasks, setTasks] = useState<any>(null);
 
   const [fetchError, setFetchError] = useState<any>(null)
+
   const [taskTitles, setTaskTitles] = useState<any>(null)
 
   const [createError, setCreateError] = useState<any>(null)
@@ -28,6 +31,45 @@ export default function Home() {
   const [openStatus, setOpenStatus] = useState<String | null>(null);
 
   const [sessionData, setSessionData] = useState<any>(null);
+
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { source, target } = event.operation
+
+    if (!target) return
+
+    const taskId = source?.id
+    const newStatus = target.id
+
+    console.log(taskId)
+    console.log(newStatus)
+
+    const task = taskTitles?.find(
+      (task: any) => task.id === taskId
+    )
+
+    if (!task || task.status === newStatus) {
+      return
+    }
+
+    const { error } = await supabase
+      .from("tasks")
+      .update({
+        status: newStatus,
+      })
+      .eq("id", taskId)
+      .eq("user_id", sessionData.userId)
+
+    if (error) {
+      console.error("Failed to update task: ", error)
+      return
+    }
+
+    await fetchTasks()
+  }
+
+  
+
 
   useEffect(() => {
     const getSession = async () => {
@@ -142,111 +184,43 @@ export default function Home() {
       </div>
       
       {/* Sections (Todo, In progress, Done) */}
-      <div className="flex gap-8">
-
-          {/* Todo */}
-          <div>
-            <div className="task-grid">
-              <div className="status">
-                <h2>Todo</h2>
-              </div>
-
-              {/* Box */}
-              {taskTitles && (
-                <div>
-                  {taskTitles
-                  .filter((task: any) => task.status === stat[0])
-                  .map((tasks: any) => (
-                      <TaskCard key={tasks.id} tasks={tasks} />
-                  ))}
-                </div>
-              )}
-
-              {/* Add Tasks */}
-              {openStatus === stat[0] && (
-                <div className="TaskCard">
-                  <Form 
-                      createTasks={createTasks} 
-                      sessionData={sessionData}
-                      status={stat[0]}/>
-                </div>
-              )}
-              </div>
-              <AddButton 
-                  openStatus={stat[0]}
-                  setOpenStatus={setOpenStatus}/>
-            </div>
+      <DragDropProvider
+        onDragEnd={handleDragEnd}>
+        <div className="flex gap-8">
+            
+            <Column 
+              taskTitles={taskTitles} 
+              TaskCard={TaskCard}
+              openStatus={openStatus}
+              setOpenStatus={setOpenStatus}
+              stat={stat[0]}
+              createTasks={createTasks}
+              sessionData={sessionData}/>
 
 
-          {/* In progress */}
-          <div>
-            <div className="task-grid">
-                <div className="status">
-                  <h2>In Progress</h2>
-                </div>
-
-                {/* Box */}
-                {taskTitles && (
-                  <div>
-                    {taskTitles
-                    .filter((task: any) => task.status === stat[1])
-                    .map((tasks: any) => (
-                        <TaskCard key={tasks.id} tasks={tasks} />
-                    ))}
-                  </div>
-                )}
-
-                {/* Add tasks */}
-                {openStatus === stat[1] && (
-                  <div className="TaskCard">
-                    <Form 
-                      createTasks={createTasks} 
-                      sessionData={sessionData}
-                      status={stat[1]}/>
-                  </div>
-                )}
-                </div>
-                <AddButton 
-                  openStatus={stat[1]}
-                  setOpenStatus={setOpenStatus}/>
-            </div>
+            {/* In progress */}
+            <Column 
+              taskTitles={taskTitles} 
+              TaskCard={TaskCard}
+              openStatus={openStatus}
+              setOpenStatus={setOpenStatus}
+              stat={stat[1]}
+              createTasks={createTasks}
+              sessionData={sessionData}/>
 
 
-          {/* Done */}
-          <div>
-            <div className="task-grid">
-              <div className="status">
-                <h2>Done</h2>
-              </div>
-
-              {/* Box */}
-              {taskTitles && (
-                <div>
-                  {taskTitles
-                  .filter((task: any) => task.status === stat[2])
-                  .map((tasks: any) => (
-                      <TaskCard key={tasks.id} tasks={tasks} />
-                  ))}
-                </div>
-              )}
-                
-              {/* Add tasks */}
-              {openStatus === stat[2] && (
-                <div className="TaskCard">
-                  <Form 
-                    createTasks={createTasks} 
-                    sessionData={sessionData}
-                    status={stat[2]}/>
-                </div>
-              )}
-              
-              </div>
-              <AddButton 
-                  openStatus={stat[2]}
-                  setOpenStatus={setOpenStatus}/>
-            </div>
-      </div>
+            {/* Done */}
+            <Column 
+              taskTitles={taskTitles} 
+              TaskCard={TaskCard}
+              openStatus={openStatus}
+              setOpenStatus={setOpenStatus}
+              stat={stat[2]}
+              createTasks={createTasks}
+              sessionData={sessionData}/>
+        </div>
+      </DragDropProvider>
     </div>
-
+    
   );
 }

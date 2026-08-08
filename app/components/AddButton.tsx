@@ -6,7 +6,8 @@ const AddButton = ({openStatus, setOpenStatus}: { openStatus: string, setOpenSta
     <div className="button">
       <button
         type="button"
-        onClick={() => setOpenStatus(openStatus)}
+        onClick={() => 
+          setOpenStatus(openStatus)}
         onDoubleClick={() => setOpenStatus(null)}
         style={{ marginLeft: 10}}
       >Add Task</button>
