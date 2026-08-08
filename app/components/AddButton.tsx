@@ -10,7 +10,7 @@ const AddButton = ({openStatus, setOpenStatus}: { openStatus: string, setOpenSta
           setOpenStatus(openStatus)}
         onDoubleClick={() => setOpenStatus(null)}
         style={{ marginLeft: 10}}
-      >Add Task</button>
+      >+ Add Task</button>
     </div>
   )
 }

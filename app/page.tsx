@@ -18,9 +18,13 @@ export default function Home() {
 
   // console.log(supabase)
   const supabase = createClient()
-  const stat: string[] = ["to-do", "in-progress", "done"]
 
-  const [tasks, setTasks] = useState<any>(null);
+  const [stat, setStat] = useState({
+    ToDo: 'To Do',
+    InProgress: 'In Progress',
+    InReview: 'In Review',
+    Done: 'Done'
+  })
 
   const [fetchError, setFetchError] = useState<any>(null)
 
@@ -169,55 +173,38 @@ export default function Home() {
       }
   }
   
-  
   useEffect(() => {
     fetchTasks()
   }, [sessionData])
 
 
   return (
-    <div className="flex flex-col flex-1 bg-zinc-50 font-sans pt-4 p-8">
+    <div className="flex flex-col flex-1 font-sans pt-4 p-8">
       {fetchError && (<p>{fetchError}</p>)}
       {/* Title */}
+
       <div className="border-b">
-          <h1 className="p-2 text-xl mg">My Tasks</h1>
+          <h1 className="p-2 text-xl mg">TaskBoard</h1>
       </div>
+
+      <h1 className="p-2 mg">My Tasks</h1>
       
       {/* Sections (Todo, In progress, Done) */}
       <DragDropProvider
         onDragEnd={handleDragEnd}>
         <div className="flex gap-8">
-            
-            <Column 
-              taskTitles={taskTitles} 
-              TaskCard={TaskCard}
-              openStatus={openStatus}
-              setOpenStatus={setOpenStatus}
-              stat={stat[0]}
-              createTasks={createTasks}
-              sessionData={sessionData}/>
-
-
-            {/* In progress */}
-            <Column 
-              taskTitles={taskTitles} 
-              TaskCard={TaskCard}
-              openStatus={openStatus}
-              setOpenStatus={setOpenStatus}
-              stat={stat[1]}
-              createTasks={createTasks}
-              sessionData={sessionData}/>
-
-
-            {/* Done */}
-            <Column 
-              taskTitles={taskTitles} 
-              TaskCard={TaskCard}
-              openStatus={openStatus}
-              setOpenStatus={setOpenStatus}
-              stat={stat[2]}
-              createTasks={createTasks}
-              sessionData={sessionData}/>
+            {Object.entries(stat).map(([key, value]) => (
+              <Column 
+                key={key}
+                taskTitles={taskTitles} 
+                TaskCard={TaskCard}
+                openStatus={openStatus}
+                setOpenStatus={setOpenStatus}
+                stat={value}
+                createTasks={createTasks}
+                sessionData={sessionData}
+              />
+            ))}
         </div>
       </DragDropProvider>
     </div>
