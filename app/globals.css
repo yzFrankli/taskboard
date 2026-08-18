@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #e8eef4;
-  --foreground: #15202b;
-  --muted: #5b6b7c;
+  --background: #e5ebf1;
+  --foreground: #102031;
+  --muted: #587083;
   --surface: #ffffff;
   --surface-soft: #f4f7fa;
   --border: #d5dee8;
-  --accent: #0f766e;
-  --accent-soft: #ccfbf1;
+  --accent: #087b73;
+  --accent-soft: #c7f3ea;
   --shadow: 0 1px 2px rgb(21 32 43 / 4%), 0 8px 24px rgb(21 32 43 / 6%);
   --todo: #64748b;
-  --progress: #0284c7;
-  --review: #b45309;
-  --done: #0f766e;
+  --progress: #027cb9;
+  --review: #c46908;
+  --done: #07845f;
 }
 
 @theme inline {
@@ -30,11 +30,7 @@
 }
 
 body {
-  background:
-    radial-gradient(ellipse 80% 50% at 10% -10%, #c7e7e2 0%, transparent 55%),
-    radial-gradient(ellipse 70% 45% at 95% 5%, #c5d8f0 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% 100%, #dfe8f2 0%, transparent 45%),
-    var(--background);
+  background: radial-gradient(ellipse 85% 55% at 50% -10%, #ffffff 0%, transparent 52%), linear-gradient(135deg, #e7edf2 0%, #dbe5ed 100%);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   min-height: 100vh;
@@ -74,6 +70,16 @@ body {
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.scoreboard { background: linear-gradient(120deg, #071725, #0c2c3c 62%, #075a62); }
+.scoreboard-top { color: #9bc4d3; background: rgb(0 0 0 / 22%); border-bottom: 1px solid rgb(255 255 255 / 9%); }
+.live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 999px; background: #f84e46; box-shadow: 0 0 0 4px rgb(248 78 70 / 18%); }
+.team-mark { display: grid; place-items: center; width: 53px; height: 53px; border: 2px solid #62e4dc; border-radius: 14px; color: #eaffff; font-family: var(--font-syne), sans-serif; font-size: 18px; font-weight: 800; font-style: italic; transform: skew(-5deg); background: linear-gradient(145deg, #0c6972, #073746); box-shadow: inset 0 0 0 4px rgb(255 255 255 / 7%); }
+.score-stats > div { display: flex; min-width: 78px; flex-direction: column; align-items: center; justify-content: center; padding: 10px 12px; }
+.score-stats strong { color: white; font-family: var(--font-syne), sans-serif; font-size: 23px; line-height: 1; }
+.score-stats span { margin-top: 5px; color: #9eb4c4; font-size: 9px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+.field-empty { background: repeating-linear-gradient(0deg, transparent 0, transparent 28px, rgb(15 118 110 / 4%) 29px, transparent 30px), linear-gradient(135deg, #f6fafb, #edf5f4); }
+.field-empty small { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+
 .column-shell[data-dragging="true"] {
   background-color: color-mix(in srgb, var(--accent-soft) 55%, white);
   box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, transparent);
@@ -87,7 +93,7 @@ body {
 }
 
 .task-card:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 4px 16px rgb(21 32 43 / 10%);
   border-color: color-mix(in srgb, var(--border) 40%, var(--accent));
 }

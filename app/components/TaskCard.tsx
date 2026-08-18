@@ -38,11 +38,10 @@ const TaskCard = ({
           {tasks.description}
         </p>
       ) : null}
-      {tasks.priority ? (
-        <div className="mt-3 inline-flex rounded-md bg-surface-soft px-2 py-0.5 text-xs font-medium capitalize text-muted">
-          {tasks.priority}
-        </div>
-      ) : null}
+      <div className="mt-3 flex items-center justify-between border-t border-border/70 pt-2.5">
+        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Play {String(index + 1).padStart(2, "0")}</span>
+        {tasks.priority ? <span className="rounded-md bg-surface-soft px-2 py-0.5 text-xs font-bold capitalize text-muted">{tasks.priority}</span> : <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-accent">Ready</span>}
+      </div>
     </div>
   );
 };

@@ -13,8 +13,8 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  title: "TaskBoard",
-  description: "A calm kanban board for your tasks",
+  title: "Task Manager",
+  description: "A sports-inspired kanban board for your tasks",
 };
 
 export default function RootLayout({

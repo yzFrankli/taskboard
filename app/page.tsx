@@ -148,28 +148,31 @@ export default function Home() {
   }, [sessionData]);
 
   const taskCount = taskTitles?.length ?? 0;
+  const completedCount =
+    taskTitles?.filter((task: any) => task.status === "Done").length ?? 0;
+  const inPlayCount =
+    taskTitles?.filter((task: any) => task.status === "In Progress").length ?? 0;
 
   return (
-    <div className="flex flex-1 flex-col px-5 pb-10 pt-6 sm:px-8 lg:px-10">
-      <header className="board-in mb-8 border-b border-border/80 pb-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-              Workspace
-            </p>
-            <h1
-              className="font-[family-name:var(--font-syne)] text-4xl font-bold tracking-tight text-foreground sm:text-5xl"
-            >
-              TaskBoard
-            </h1>
-            <p className="mt-2 max-w-md text-sm text-muted">
-              Drag cards across columns to keep work moving.
-            </p>
+    <div className="flex flex-1 flex-col px-4 pb-10 pt-4 sm:px-8 sm:pt-7 lg:px-10">
+      <header className="scoreboard board-in mb-7 overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-slate-950/25">
+        <div className="scoreboard-top flex items-center justify-between px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] sm:px-6">
+          <span>Task League · Game Day</span>
+          <span className="flex items-center gap-2"><i className="live-dot" /> Live board</span>
+        </div>
+        <div className="flex flex-col gap-5 px-5 py-6 sm:px-7 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            {/* <div className="team-mark" aria-hidden>TB</div> */}
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-300">Home team</p>
+              <h1 className="font-[family-name:var(--font-syne)] text-3xl font-extrabold uppercase tracking-tight text-white sm:text-4xl">Task Manager</h1>
+              <p className="mt-1 text-sm text-slate-300">Drag cards across columns to change status.</p>
+            </div>
           </div>
-          <div className="rounded-full border border-border bg-surface/70 px-4 py-2 text-sm text-muted backdrop-blur-sm">
-            <span className="font-medium text-foreground">{taskCount}</span>
-            {" "}
-            {taskCount === 1 ? "task" : "tasks"}
+          <div className="score-stats grid grid-cols-3 divide-x divide-white/10 self-stretch rounded-xl border border-white/10 bg-slate-950/35 md:self-auto">
+            <div><strong>{taskCount}</strong><span>On board</span></div>
+            <div><strong>{inPlayCount}</strong><span>In play</span></div>
+            <div><strong>{completedCount}</strong><span>Final</span></div>
           </div>
         </div>
       </header>
